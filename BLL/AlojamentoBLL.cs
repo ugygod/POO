@@ -20,17 +20,18 @@ namespace BLL
 
         #region Alojamentos
         /// <summary>
-        /// Manipular alojamentos
+        /// Obtém a lista completa de alojamentos
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Uma lista de objetos Alojamento que representa todos os alojamentos armazenados </returns>
         public List<Alojamento> GetAllAlojamentos()
         {
             return alojamentoDAL.GetAllAlojamentos();
         }
+
         /// <summary>
-        /// Adicionar alojamentos
+        /// Adiciona um novo alojamento à lista de alojamentos
         /// </summary>
-        /// <param name="alojamento"></param>
+        /// <param name="alojamento"> O objeto Alojamento a ser adicionado </param>
         public void AdicionaAlojamentos(Alojamento alojamento)
         {
             var alojamentos = GetAllAlojamentos();
@@ -38,6 +39,12 @@ namespace BLL
             alojamentoDAL.GravarAlojamentos(alojamentos);
         }
 
+        /// <summary>
+        /// Obtém a posição na lista de um alojamento com um código específico
+        /// </summary>
+        /// <param name="alojamentos"> A lista de alojamentos a ser pesquisada </param>
+        /// <param name="codigo"> O código do alojamento a ser procurado </param>
+        /// <returns> A posição na lista do alojamento encontrado ou -1 se nenhum correspondente for encontrado </returns>
         public int GetAlojamento(List<Alojamento> alojamentos, int codigo)
         {
             int pos = -1;
@@ -51,6 +58,15 @@ namespace BLL
             return pos;
         }
 
+        /// <summary>
+        /// Edita as informações de um alojamento na lista
+        /// </summary>
+        /// <param name="alojamentos"> A lista de alojamentos a ser modificada </param>
+        /// <param name="nome"> O novo nome do alojamento </param>
+        /// <param name="camas"> O novo número de camas do alojamento </param>
+        /// <param name="espaco"> O novo espaço em metros quadrados do alojamento </param>
+        /// <param name="preco"> O novo preço por pessoa do alojamento </param>
+        /// <param name="pos"> A posição na lista do alojamento a ser editado </param>
         public void EditaAlojamento(List<Alojamento> alojamentos, string nome, int camas, double espaco, double preco, int pos)
         {
             alojamentos[pos].nome = nome;
@@ -61,9 +77,13 @@ namespace BLL
             alojamentoDAL.GravarAlojamentos(alojamentos);
         }
 
+        /// <summary>
+        /// Elimina um alojamento da lista com base no código
+        /// </summary>
+        /// <param name="alojamentos"> A lista de alojamentos a ser modificada </param>
+        /// <param name="codigo"> O código do alojamento a ser removido </param>
         public void EliminarAlojamento(List<Alojamento> alojamentos, int codigo)
         {
-            // Procura o alojamento com base no código
             var alojamentoParaEliminar = alojamentos.FirstOrDefault(r => r.codigo == codigo);
 
             if (alojamentoParaEliminar != null)

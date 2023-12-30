@@ -13,6 +13,10 @@ namespace DAL
         private const string reservaFilePath = "reservas.json";
 
         #region Reserva
+        /// <summary>
+        /// Obtém a lista completa de reservas armazenadas no arquivo
+        /// </summary>
+        /// <returns> Uma lista de objetos Reserva que representa todas as reservas armazenadas </returns>
         public List<Reserva> GetAllReservas()
         {
             if (File.Exists(reservaFilePath))
@@ -23,6 +27,10 @@ namespace DAL
             return new List<Reserva>();
         }
 
+        /// <summary>
+        /// Grava a lista de reservas no arquivo
+        /// </summary>
+        /// <param name="reservas"> A lista de reservas a ser gravada no arquivo </param>
         public void GravarReservas(List<Reserva> reservas)
         {
             var json = JsonConvert.SerializeObject(reservas, Newtonsoft.Json.Formatting.Indented);

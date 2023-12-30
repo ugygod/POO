@@ -20,17 +20,18 @@ namespace BLL
 
         #region Reservas
         /// <summary>
-        /// Manipular Reservas
+        /// Obtém a lista completa de reservas
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Uma lista de objetos Reserva que representa todas as reservas armazenadas </returns>
         public List<Reserva> GetAllReservas()
         {
             return reservaDAL.GetAllReservas();
         }
+
         /// <summary>
-        /// Adicionar Reservas
+        /// Adiciona uma nova reserva à lista de reservas
         /// </summary>
-        /// <param name="reserva"></param>
+        /// <param name="reserva"> O objeto Reserva a ser adicionado </param>
         public void AdicionaReservas(Reserva reserva)
         {
             var reservas = GetAllReservas();
@@ -38,6 +39,11 @@ namespace BLL
             reservaDAL.GravarReservas(reservas);
         }
 
+        /// <summary>
+        /// Cancela uma reserva com base no NIF do cliente
+        /// </summary>
+        /// <param name="reservas"> A lista de reservas a ser pesquisada e modificada </param>
+        /// <param name="nifCliente"> O NIF do cliente para o qual as reservas serão canceladas </param>
         public void EliminarReserva(List<Reserva> reservas, int nifCliente)
         {
             int codigo = 0;
@@ -59,7 +65,6 @@ namespace BLL
             Console.Write("Insira o código da reserva que deseja cancelar: ");
             codigo = Convert.ToInt32(Console.ReadLine());
 
-            // Procura a reserva com base no código
             var reservaParaEliminar = reservas.FirstOrDefault(r => r.codigo == codigo && r.cliente.nif == nifCliente);
 
             if (reservaParaEliminar != null)
@@ -74,6 +79,12 @@ namespace BLL
             }
         }
 
+        /// <summary>
+        /// Obtém a posição de uma reserva na lista com base no código
+        /// </summary>
+        /// <param name="reservas"> A lista de reservas a ser pesquisada </param>
+        /// <param name="codigo"> O código da reserva a ser procurada </param>
+        /// <returns> A posição da reserva na lista ou -1 se não encontrada </returns>
         public int GetReserva(List<Reserva> reservas, int codigo)
         {
             int pos = -1;
@@ -87,6 +98,15 @@ namespace BLL
             return pos;
         }
 
+        /// <summary>
+        /// Edita os detalhes de uma reserva na lista
+        /// </summary>
+        /// <param name="reservas"> A lista de reservas a ser modificada </param>
+        /// <param name="checkin"> A nova data de check-in para a reserva </param>
+        /// <param name="checkout"> A nova data de check-out para a reserva </param>
+        /// <param name="alojamento"> O novo código do alojamento para a reserva </param>
+        /// <param name="num_pessoas"> O novo número de pessoas para a reserva </param>
+        /// <param name="pos"> A posição da reserva na lista a ser editada </param>
         public void EditarReserva(List<Reserva> reservas, DateTime checkin, DateTime checkout, int alojamento, int num_pessoas, int pos)
         {
             reservas[pos].checkin = checkin;

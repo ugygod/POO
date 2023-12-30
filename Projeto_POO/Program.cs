@@ -16,7 +16,7 @@ internal class Program
         int oplogin, op;
         int nif = 0, cod = 0;
         string nome = "", password = "";
-        float saldo = 0.0f;
+       
         
         while (continuar == 1)
         {
@@ -61,7 +61,6 @@ internal class Program
                         nif = nif,
                         password = password,
                         email = email,
-                        ativo = true,
                         tipo = "Cliente"
                     };
 
@@ -73,7 +72,6 @@ internal class Program
                     continuar = 0;
                     break;
                 default:
-                    // Caso escolha uma opção inválida, o programa vai voltar a apresentar o Menu
                     break;
             }
         }
@@ -81,7 +79,6 @@ internal class Program
         if (sessaoCliente != null && sessaoCliente.tipo == "Gestor")
         {
             continuar = 1;
-            //Executar o procedimento MenuOpcoes() enquanto o continuar for igual a 1
             while (continuar == 1)
             {
                 MenuGestor();
@@ -130,7 +127,6 @@ internal class Program
         else if (sessaoCliente != null && sessaoCliente.tipo == "Cliente")
         {
             continuar = 1;
-            //Executar o procedimento MenuOpcoes() enquanto o continuar for igual a 1
             while (continuar == 1)
             {
                 MenuCliente();
@@ -178,22 +174,31 @@ internal class Program
     }
     static void ListaAlojamentosDisponiveis(List<Alojamento> alojamentos, List<Reserva> reservas)
     {
-        Console.WriteLine("\nLista de alojamentos disponiveis:");
+        Console.WriteLine("\nLista de alojamentos disponíveis: ");
+
         foreach (var alojamento in alojamentos)
         {
-            for (int i = 0; i < reservas.Count; i++)
+            bool disponivel = true;
+
+            foreach (var reserva in reservas)
             {
-                if (alojamento.codigo != reservas[i].alojamento.codigo)
+                if (alojamento.codigo == reserva.alojamento.codigo)
                 {
-                    Console.WriteLine($"\nCódigo: {alojamento.codigo} \n" +
-                            $"Nome do Alojamento: {alojamento.nome} \n" +
-                            $"Número de camas: {alojamento.camas} \n" +
-                            $"Espaço em m2: {alojamento.espaco} \n" +
-                            $"Preço por pessoa: {alojamento.preco} \n");
+                    disponivel = false;
+                    break; 
                 }
+            }
+            if (disponivel)
+            {
+                Console.WriteLine($"\nCódigo: {alojamento.codigo} \n" +
+                                  $"Nome do Alojamento: {alojamento.nome} \n" +
+                                  $"Número de camas: {alojamento.camas} \n" +
+                                  $"Espaço em m2: {alojamento.espaco} \n" +
+                                  $"Preço por pessoa: {alojamento.preco} \n");
             }
         }
     }
+
 
     static void AdicionaAlojamentos(AlojamentoBLL alojamentoBLL)
     {

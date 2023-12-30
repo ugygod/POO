@@ -13,7 +13,6 @@ namespace Model
         public int nif { get; set; }
         public string password { get; set; }
         public string email { get; set; }
-        public bool ativo { get; set; }
         public string tipo { get; set; }
     }
 }
