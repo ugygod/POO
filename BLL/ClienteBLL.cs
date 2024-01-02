@@ -61,6 +61,25 @@ namespace BLL
         }
 
         /// <summary>
+        /// Verifica se existe um cliente com um NIF específico na lista de clientes
+        /// </summary>
+        /// <param name="clientes"> A lista de clientes a ser verificada </param>
+        /// <param name="nif"> O NIF do cliente a ser procurado </param>       
+        /// <returns> O cliente encontrado ou um novo objeto Cliente se nenhum correspondente for encontrado </returns>
+        public bool ExisteClienteNIF(List<Cliente> clientes, int nif)
+        {
+            for (int i = 0; i < clientes.Count; i++)
+            {
+                if (clientes[i].nif == nif)
+                {
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Obtém a posição na lista de um cliente com um código específico
         /// </summary>
         /// <param name="clientes"> A lista de clientes a ser pesquisada </param>

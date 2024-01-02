@@ -44,29 +44,37 @@ internal class Program
                     break;
 
                 case 2:
+                    bool res = false;
                     Console.WriteLine("\n################## Registar-se ##################");
                     Console.Write("Nome: ");
                     nome = Console.ReadLine();
                     Console.Write("NIF: ");
                     nif = Convert.ToInt32(Console.ReadLine());
-                    Console.Write("Password: ");
-                    password = Console.ReadLine();
-                    Console.Write("Email: ");
-                    string email = Console.ReadLine();
-
-                   Cliente cliente = new Cliente
+                    res = clienteBLL.ExisteClienteNIF(clienteBLL.GetAllClientes(), nif);
+                    if (res == false)
                     {
-                        codigo = clienteBLL.GetAllClientes().Count + 1,
-                        nome = nome,
-                        nif = nif,
-                        password = password,
-                        email = email,
-                        tipo = "Cliente"
-                    };
+                        Console.Write("Password: ");
+                        password = Console.ReadLine();
+                        Console.Write("Email: ");
+                        string email = Console.ReadLine();
 
-                    clienteBLL.AdicionaClientes(cliente);
-                    Console.WriteLine("Registo efetuado com sucesso!");
+                        Cliente cliente = new Cliente
+                        {
+                            codigo = clienteBLL.GetAllClientes().Count + 1,
+                            nome = nome,
+                            nif = nif,
+                            password = password,
+                            email = email,
+                            tipo = "Cliente"
+                        };
 
+                        clienteBLL.AdicionaClientes(cliente);
+                        Console.WriteLine("Registo efetuado com sucesso!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("O NIF introduzido já está associado a uma conta!");
+                    }
                     break;
                 case 3:
                     continuar = 0;
@@ -292,64 +300,120 @@ internal class Program
 
     static void AdicionaReservas(ReservaBLL reservaBLL, AlojamentoBLL alojamentoBLL, List<Alojamento>alojamentos)
     {
-        Console.Write("Data de Checkin: ");
-        DateTime checkin = Convert.ToDateTime(Console.ReadLine());
-        Console.Write("Data de Checkout: ");
-        DateTime checkout = Convert.ToDateTime(Console.ReadLine());
+        bool res = false;
+
         Console.Write("Codigo do Alojamento: ");
         int alojamento = Convert.ToInt32(Console.ReadLine());
-        Console.Write("Numero de Pessoas incluidas na Reserva: ");
-        int num_pessoas = Convert.ToInt32(Console.ReadLine());
 
         int pos = alojamentoBLL.GetAlojamento(alojamentos, alojamento);
 
-        Reserva reserva = new Reserva
+        if (pos != -1)
         {
-            codigo = reservaBLL.GetAllReservas().Count + 1,
-            checkin = checkin,
-            checkout = checkout,
-            cliente = sessaoCliente,
-            alojamento = alojamentos[pos],
-            num_pessoas = num_pessoas
-        };
+            Console.Write("Data de Checkin: ");
+            DateTime checkin = Convert.ToDateTime(Console.ReadLine());
 
-        reservaBLL.AdicionaReservas(reserva);
-        Console.WriteLine("Reserva adicionada com sucesso!");
+            res = reservaBLL.ExisteReservaPorAlojamentoEData(reservaBLL.GetAllReservas(), alojamento, checkin);
+
+            if (res == true)
+            {
+                Console.Write("Data de Checkout: ");
+                DateTime checkout = Convert.ToDateTime(Console.ReadLine());
+
+                if (checkout > checkin)
+                {
+                    Console.Write("Numero de Pessoas incluidas na Reserva: ");
+                    int num_pessoas = Convert.ToInt32(Console.ReadLine());
+
+                    Reserva reserva = new Reserva
+                    {
+                        codigo = reservaBLL.GetAllReservas().Count + 1,
+                        checkin = checkin,
+                        checkout = checkout,
+                        cliente = sessaoCliente,
+                        alojamento = alojamentos[pos],
+                        num_pessoas = num_pessoas
+                    };
+
+                    reservaBLL.AdicionaReservas(reserva);
+                    Console.WriteLine("Reserva adicionada com sucesso!");
+                }
+                else
+                {
+                    Console.WriteLine("Data de checkout inválida");
+                }
+               
+            }
+            else
+            {
+                Console.WriteLine("O Alojamento introduzido já se encontra reservado para a data inserida!");
+            }
+           
+        }
+        else
+        {
+            Console.WriteLine("O Código do Alojamento introduzido não é válido!");
+        }
     }
 
     static void EditarReservas(List<Reserva> reservas, ReservaBLL reservaBLL, AlojamentoBLL alojamentoBLL) 
     {
         int pos = 0, pos_alojamento = 0;
+        bool res = false;
         Console.Write("Insira o Código da Reserva que deseja editar: ");
         int codigo = Convert.ToInt32(Console.ReadLine());
         pos = reservaBLL.GetReserva(reservaBLL.GetAllReservas(), codigo);
 
-        Console.Write("Data de Checkin: ");
-        DateTime checkin = Convert.ToDateTime(Console.ReadLine());
-        Console.Write("Data de Checkout: ");
-        DateTime checkout = Convert.ToDateTime(Console.ReadLine());
-        Console.Write("Codigo do Alojamento: ");
-        int alojamento = Convert.ToInt32(Console.ReadLine());
-        pos_alojamento = alojamentoBLL.GetAlojamento(alojamentoBLL.GetAllAlojamentos(), alojamento);
-
-        if (pos_alojamento != -1)
+        if (pos != -1)
         {
-            Console.Write("Numero de Pessoas incluidas na Reserva: ");
-            int num_pessoas = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Codigo do Alojamento: ");
+            int alojamento = Convert.ToInt32(Console.ReadLine());
+            pos_alojamento = alojamentoBLL.GetAlojamento(alojamentoBLL.GetAllAlojamentos(), alojamento);
 
-            reservaBLL.EditarReserva(reservaBLL.GetAllReservas(), checkin, checkout, alojamento, num_pessoas, pos);
-            Console.WriteLine("Reserva editada com sucesso!");
-        }
-        else 
+            if (pos_alojamento != -1)
+            {
+                Console.Write("Data de Checkin: ");
+                DateTime checkin = Convert.ToDateTime(Console.ReadLine());
+                res = reservaBLL.ExisteReservaPorAlojamentoEData(reservaBLL.GetAllReservas(), alojamento, checkin);
+
+                if (res == true)
+                {
+                    Console.Write("Data de Checkout: ");
+                    DateTime checkout = Convert.ToDateTime(Console.ReadLine());
+
+                    if (checkout > checkin)
+                    {
+                        Console.Write("Numero de Pessoas incluidas na Reserva: ");
+                        int num_pessoas = Convert.ToInt32(Console.ReadLine());
+
+                        reservaBLL.EditarReserva(reservaBLL.GetAllReservas(), checkin, checkout, alojamento, num_pessoas, pos);
+                        Console.WriteLine("Reserva editada com sucesso!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Data de checkout inválida");
+                    }               
+                }
+                else
+                {
+                    Console.WriteLine("O Alojamento introduzido já se encontra reservado para a data inserida!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Codigo do Alojamento inválido! ");
+            }
+        }                     
+        else
         {
-            Console.WriteLine("Codigo do Alojamento inválido! ");
+            Console.WriteLine("O código da reserva inserido não é válido!");
         }
     }
 
     static void EditarClientes(List<Cliente> clientes, ClienteBLL clienteBLL)
     {
+        bool res = false;
         int pos = 0;
-
+       
         if (sessaoCliente.tipo == "Gestor")
         {
             Console.Write("Código do Cliente: ");
@@ -365,21 +429,30 @@ internal class Program
         string nome = Console.ReadLine();
         Console.Write("Novo NIF: ");
         int nif = Convert.ToInt32(Console.ReadLine());
-        Console.Write("Nova password: ");
-        string password = Console.ReadLine();
-        Console.Write("Novo Email: ");
-        string email = Console.ReadLine();
-        
-        if (sessaoCliente.tipo == "Gestor")
+        res = clienteBLL.ExisteClienteNIF(clienteBLL.GetAllClientes(), nif);
+
+        if (res == false) 
         {
-            Console.Write("Tipo (Cliente/Gestor): ");
-            string tipo = Console.ReadLine();
-            clienteBLL.EditaCliente(clientes, nome, nif, password, email, tipo, pos);
+            Console.Write("Nova password: ");
+            string password = Console.ReadLine();
+            Console.Write("Novo Email: ");
+            string email = Console.ReadLine();
+
+            if (sessaoCliente.tipo == "Gestor")
+            {
+                Console.Write("Tipo (Cliente/Gestor): ");
+                string tipo = Console.ReadLine();
+                clienteBLL.EditaCliente(clientes, nome, nif, password, email, tipo, pos);
+            }
+            else
+            {
+                clienteBLL.EditaCliente(clientes, nome, nif, password, email, "Cliente", pos);
+            }
         }
         else
         {
-            clienteBLL.EditaCliente(clientes, nome, nif, password, email, "Cliente", pos);
-        }        
+            Console.WriteLine("O NIF introduzido já está associado a uma conta!");
+        }
     }
 
     static void EliminarAlojamentos(List<Alojamento> alojamentos, AlojamentoBLL alojamentoBLL)

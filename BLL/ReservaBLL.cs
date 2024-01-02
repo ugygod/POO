@@ -99,6 +99,32 @@ namespace BLL
         }
 
         /// <summary>
+        /// Verifica se existe uma reserva para o alojamento passado por parâmetro
+        /// </summary>
+        /// <param name="reservas"> A lista de reservas a ser pesquisada </param>
+        /// <param name="codigo"> O código do alojamento a ser procurado </param>
+        /// <param name="checkin"> A data a ser comparada para ver se o alojamento jã esta reservado para a data introduzida </param>
+        /// <returns> A posição da reserva na lista ou -1 se não encontrada </returns>
+        public bool ExisteReservaPorAlojamentoEData(List<Reserva> reservas, int codigo, DateTime checkin)
+        {
+            for (int i = 0; i < reservas.Count; i++)
+            {
+                if (reservas[i].alojamento.codigo == codigo)
+                {
+                    if (checkin > reservas[i].checkout)
+                    {
+                        return true;
+                    }    
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Edita os detalhes de uma reserva na lista
         /// </summary>
         /// <param name="reservas"> A lista de reservas a ser modificada </param>
